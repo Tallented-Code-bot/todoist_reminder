@@ -1,8 +1,8 @@
+from datetime import datetime,timezone
+import os
 from dotenv import load_dotenv
-from datetime import date,datetime,timezone
 from win10toast import ToastNotifier
 from dateutil import parser
-import os
 import requests
 
 
@@ -17,12 +17,14 @@ n=ToastNotifier()
 # scheduler.start()
 
 def get_date_object(date_string):
+	"""Parse a datetime string as a datetime object."""
 	# return iso8601.parse_date(date_string)
 	return parser.parse(date_string).astimezone()
-	
 
 
-def showNotification(task):
+
+def show_notification(task):
+	"""Shows a notification for a given task."""
 	content=task["content"]
 	description=task["description"]
 	if description=="":
@@ -31,27 +33,22 @@ def showNotification(task):
 		content =" "
 
 	n.show_toast(content,description)
-	# notification.notify(
-	# 	title=content,
-	# 	message=description,
-	# 	app_icon=None,
-	# 	timeout=5
-	# )
 
-def getTasksFromTodoist():
+def get_tasks_from_todoist():
+	"""Get all your tasks from todoist, filtering by label."""
 	return requests.get(
 		"https://api.todoist.com/rest/v1/tasks",
 		params={
 			"label_id":2158391266
 			# filter:"@label & tomorrow"
-			
 		},
 		headers={
 			"Authorization": "Bearer %s" % todoist_token
 		}
 	).json()
 
-def getLabelsFromTodoist():
+def get_labels_from_todoist():
+	"""Get all your todoist labels and return them as json."""
 	return requests.get(
 		"https://api.todoist.com/rest/v1/labels",
 		headers={
@@ -59,11 +56,21 @@ def getLabelsFromTodoist():
 		}
 	).json()
 
-def getTasksToday(list=None):
+
+def get_tasks_today(output=None):
+	"""
+	Gets all your todoist tasks for today that have the reminder label.
+
+	:param output: The list to append to.  This function will not make duplicate items.
+	:type output: list
+
+	:rtype:list
+	:return: A list of all todoist tasks for today with the reminder label.
+	"""
 	today=datetime.now(timezone.utc).astimezone().replace(microsecond=0)
 
-	response=getTasksFromTodoist()
-	if list is None:
+	response=get_tasks_from_todoist()
+	if output is None:
 		tasks=[]
 
 	for item in response:
@@ -76,16 +83,15 @@ def getTasksToday(list=None):
 			due=get_date_object(due)
 			if due.day==today.day:
 				# tasks.append(due)
-				if list is not None:
-					if item not in list:	
-						list.append(item)
+				if output is not None:
+					if item not in output:
+						output.append(item)
 				else:
 					tasks.append(item)
-	if list is None:	
+	if list is None:
 		return tasks
 
 
-	
 
 # exec_date=date()
 # show_notification(getTasksFromTodoist())
@@ -93,10 +99,10 @@ def getTasksToday(list=None):
 # tasks=getTasksToday()
 tasks=[]
 
-getTasksToday(tasks)
+get_tasks_today(tasks)
 
 for task in tasks:
-	showNotification(task)
+	show_notification(task)
 
 # print(tasks)
 # print()
