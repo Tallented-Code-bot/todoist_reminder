@@ -2,19 +2,14 @@ from datetime import datetime,timezone
 import os
 from dotenv import load_dotenv
 from win10toast import ToastNotifier
+from apscheduler.schedulers.background import BackgroundScheduler
 from dateutil import parser
 import requests
 
 
 
 
-load_dotenv()
-todoist_token=os.getenv("TODOIST_TOKEN")
-n=ToastNotifier()
 
-
-# scheduler=Scheduler()
-# scheduler.start()
 
 def get_date_object(date_string):
 	"""Parse a datetime string as a datetime object."""
@@ -33,6 +28,7 @@ def show_notification(task):
 		content =" "
 
 	n.show_toast(content,description)
+	complete_task(task)
 
 def get_tasks_from_todoist():
 	"""Get all your tasks from todoist, filtering by label."""
@@ -43,7 +39,7 @@ def get_tasks_from_todoist():
 			# filter:"@label & tomorrow"
 		},
 		headers={
-			"Authorization": "Bearer %s" % todoist_token
+			"Authorization": f"Bearer {todoist_token}"
 		}
 	).json()
 
@@ -52,7 +48,7 @@ def get_labels_from_todoist():
 	return requests.get(
 		"https://api.todoist.com/rest/v1/labels",
 		headers={
-			"Authorization": "Bearer %s" % todoist_token
+			"Authorization": f"Bearer {todoist_token}"
 		}
 	).json()
 
@@ -91,19 +87,48 @@ def get_tasks_today(output=None):
 	if list is None:
 		return tasks
 
+def update_jobs(scheduler,tasks):
+	"""Add tasks to the scheduler, making sure there are no duplicates."""
+	current_jobs=scheduler.get_jobs()
+
+	for task in tasks:
+		job_in=False
+		for job in current_jobs:
+			# Iterate through the jobs and see if the job for this task is there
+			if job.args[0] == task:
+				job_in=True
+		if not job_in:
+			#if it is not there, add it.
+			scheduler.add_job(show_notification,'date',run_date=task["due"]["datetime"],args=[task])
 
 
-# exec_date=date()
-# show_notification(getTasksFromTodoist())
-# print(getLabelsFromTodoist())
-# tasks=getTasksToday()
-tasks=[]
+def complete_task(task):
+	"""Completes a todoist task"""
+	requests.post(
+		f"https://api.todoist.com/rest/v1/tasks/{task['id']}/close",
+		headers={
+			"Authorization":f"Bearer {todoist_token}"
+		}
+	)
 
-get_tasks_today(tasks)
+def sync(scheduler,tasks):
+	"""Sync tasks and jobs."""
+	get_tasks_today(tasks)
+	update_jobs(scheduler,tasks)
+	scheduler.print_jobs()
 
-for task in tasks:
-	show_notification(task)
 
-# print(tasks)
-# print()
-# print(len(tasks))
+
+if __name__=="__main__":
+	load_dotenv()
+	todoist_token=os.getenv("TODOIST_TOKEN")
+	n=ToastNotifier()
+	scheduler=BackgroundScheduler()
+
+	tasks=[]
+	sync(scheduler,tasks)
+
+	scheduler.add_job(sync,'interval',seconds=30,args=[scheduler,tasks])
+	scheduler.start()
+	while True:
+		pass
