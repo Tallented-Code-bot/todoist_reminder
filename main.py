@@ -1,12 +1,9 @@
 from dotenv import load_dotenv
 from datetime import date,datetime,timezone
-# from apscheduler import Scheduler
 from win10toast import ToastNotifier
 from dateutil import parser
 import os
 import requests
-import iso8601
-import pytz
 
 
 
