@@ -3,6 +3,8 @@ from win10toast import ToastNotifier
 from dotenv import load_dotenv
 from datetime import datetime,timezone
 import requests
+import json
+import uuid
 import functions
 
 n=ToastNotifier()
@@ -19,6 +21,48 @@ def show_notification(task):
 
 	n.show_toast(content,description)
 	complete_task(task)
+
+def create_todoist_task(content,description=None,project=None,section=None,parent_task=None,labels=None,priority=None,due_datetime=None):
+	"""Creates a task in todoist.
+
+	:param content:The name of the task.
+	:type content:string
+	:param description:The task description.
+	:type description:string
+	:param project:The id of the project to put the task in.
+	:type project:integer
+	:param section:The id of the section to put the task in.
+	:type section:integer
+	:param parent_task:The id of this task's parent task.
+	:type parent_task:integer
+	:param label:A list of label ids to apply to the task.
+	:type label:list
+	:param priority:The priority of the task.
+	:type priority:integer
+	:param due_datetime:The datetime that the task is due, in rfc3339 format.
+	:type due_datetime:string
+	"""
+
+
+	return requests.post(
+		"https://api.todoist.com/rest/v1/tasks",
+		data=json.dumps({
+			"content":content,
+			"description":description,
+			"project_id":project,
+			"section_id":section,
+			"parent_id":parent_task,
+			"label_ids":labels,
+			"priority":priority,
+			"due_datetime":due_datetime
+		}),
+		headers={
+			"Content-Type":"application/json",
+			"X-Request-Id":str(uuid.uuid4()),
+			"Authorization":f"Bearer {todoist_token}"
+		}
+	).json()
+
 
 def get_tasks_from_todoist():
 	"""Get all your tasks from todoist, filtering by label."""
