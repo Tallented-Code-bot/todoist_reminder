@@ -97,7 +97,7 @@ def get_tasks_today(output=None):
 	:rtype:list
 	:return: A list of all todoist tasks for today with the reminder label.
 	"""
-	today=datetime.now(timezone.utc).astimezone().replace(microsecond=0)
+	today=functions.get_today()
 
 	response=get_tasks_from_todoist()
 	if output is None:
