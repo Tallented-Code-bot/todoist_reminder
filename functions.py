@@ -1,3 +1,4 @@
+import json
 from datetime import datetime,timezone
 from dateutil import parser
 def get_date_object(date_string):
@@ -14,4 +15,12 @@ def is_one_datetime_before_another(one,two):
 	difference=one-two
 	if difference.days<0:
 		return True
+	return False
+
+
+def is_value_in_list(value,key,list):
+	"Checks if a key-value pair exists in a list of objects"
+	for item in list:
+		if item[f"{key}"]==value:
+			return True
 	return False
