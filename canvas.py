@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 import todoist
+import functions
 
 load_dotenv()
 CANVAS_TOKEN=os.getenv('CANVAS_TOKEN')
@@ -17,13 +18,19 @@ def get_current_courses():
 
 def get_current_assignments(course):
 	"""Get the current assignments for a course."""
-	return requests.get(
+	today=functions.get_today()
+	response=requests.get(
 		f"https://rsd.instructure.com/api/v1/courses/{course}/assignments",
 		headers={
 			"Authorization": f"Bearer {CANVAS_TOKEN}"
 		}
 	).json()
 
+	response_due=functions.get_date_object(response["due_at"])
+	if functions.is_one_datetime_before_another(today, response_due):
+		# If the due date is in the future
+		todoist.create_todoist_task(response["name"])
+			
 # course=get_current_courses()[0]["id"]
-print(todoist.create_todoist_task("This is a test",priority=3))
+# print(todoist.create_todoist_task("This is a test",priority=3))
 # print(get_current_assignments(course))
