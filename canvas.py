@@ -1,11 +1,13 @@
-import os
+import json
 import requests
-from dotenv import load_dotenv
 import todoist
 import functions
 
-load_dotenv()
-CANVAS_TOKEN=os.getenv('CANVAS_TOKEN')
+with open("config.json","r") as config_file:
+	config=json.load(config_file)
+
+
+CANVAS_TOKEN=config["canvas_token"]
 
 def get_current_courses():
 	"""Get the current courses in canvas."""

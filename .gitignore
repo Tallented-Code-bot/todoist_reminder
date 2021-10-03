@@ -5,3 +5,4 @@ env
 .vscode
 *.html
 *.pyc
+config.json

@@ -1,15 +1,14 @@
-import os
-from win10toast import ToastNotifier
-from dotenv import load_dotenv
-from datetime import datetime,timezone
-import requests
 import json
 import uuid
+from win10toast import ToastNotifier
+import requests
 import functions
 
 n=ToastNotifier()
-load_dotenv()
-todoist_token=os.getenv("TODOIST_TOKEN")
+with open("config.json","r") as config_file:
+	config=json.load(config_file)
+
+todoist_token=config["todoist_token"]
 def show_notification(task):
 	"""Shows a notification for a given task."""
 	content=task["content"]
