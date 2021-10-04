@@ -20,7 +20,7 @@ def is_one_datetime_before_another(one,two):
 
 def is_value_in_list(value,key,list):
 	"Checks if a key-value pair exists in a list of objects"
-	for item in list:
-		if item[f"{key}"]==value:
-			return True
+	for index,item in enumerate(list):
+		if str(item[f"{key}"])==str(value):
+			return index
 	return False
