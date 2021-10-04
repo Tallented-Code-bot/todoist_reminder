@@ -3,7 +3,7 @@ import requests
 import todoist
 import functions
 
-with open("config.json","r") as config_file:
+with open("config.json","rt",encoding="utf-8") as config_file:
 	config=json.load(config_file)
 
 
@@ -30,7 +30,7 @@ def get_current_assignments(course):
 			"bucket":"future"
 		}
 	).json()
-	print(f"Testing course with name:{course['originalName']} and id:{course['id']}...")	
+	print(f"Testing course with name:{course['originalName']} and id:{course['id']}...")
 	i=functions.is_value_in_list(course["id"],"course_id",config["course_locations"])
 
 	if i is False:

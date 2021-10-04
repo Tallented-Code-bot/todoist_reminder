@@ -5,7 +5,7 @@ import requests
 import functions
 
 n=ToastNotifier()
-with open("config.json","r") as config_file:
+with open("config.json","r",encoding="utf-8") as config_file:
 	config=json.load(config_file)
 
 todoist_token=config["todoist_token"]
