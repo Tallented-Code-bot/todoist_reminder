@@ -42,25 +42,29 @@ def create_todoist_task(content,description=None,project=None,section=None,paren
 	:type due_datetime:string
 	"""
 
-
-	return requests.post(
-		"https://api.todoist.com/rest/v1/tasks",
-		data=json.dumps({
-			"content":content,
-			"description":description,
-			"project_id":project,
-			"section_id":section,
-			"parent_id":parent_task,
-			"label_ids":labels,
-			"priority":priority,
-			"due_datetime":due_datetime
-		}),
-		headers={
-			"Content-Type":"application/json",
-			"X-Request-Id":str(uuid.uuid4()),
-			"Authorization":f"Bearer {todoist_token}"
-		}
-	).json()
+	try:
+		task=requests.post(
+			"https://api.todoist.com/rest/v1/tasks",
+			data=json.dumps({
+				"content":content,
+				"description":description,
+				"project_id":project,
+				"section_id":section,
+				"parent_id":parent_task,
+				"label_ids":labels,
+				"priority":priority,
+				"due_datetime":due_datetime
+			}),
+			headers={
+				"Content-Type":"application/json",
+				"X-Request-Id":str(uuid.uuid4()),
+				"Authorization":f"Bearer {todoist_token}"
+			}
+		)
+		task.raise_for_status()
+	except requests.exceptions.HTTPError as errh:
+		return "An Http Error occurred:"+repr(errh)
+	return task.json()
 
 
 def get_tasks_from_todoist():
