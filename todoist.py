@@ -148,6 +148,23 @@ def complete_task(task):
 		}
 	)
 
+def create_comment(task_id,text):
+	"""Create a comment on a todoist task."""
+	comment=requests.post(
+		"https://api.todoist.com/rest/v1/comments",
+		data=json.dumps({
+			"task_id":task_id,
+			"content":text
+		}),
+		headers={
+			"Content-Type": "application/json",
+			"X-Request-Id":str(uuid.uuid4()),
+			"Authorization": f"Bearer {todoist_token}"
+		}
+	)
+	return comment.json()
+
+
 def sync(scheduler,tasks):
 	"""Sync tasks and jobs."""
 	get_tasks_today(tasks)
