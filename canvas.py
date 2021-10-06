@@ -56,6 +56,8 @@ def get_current_assignments(course):
 				labels=locations["todoist_label_ids"],
 				due_datetime=assignment["due_at"]
 			)
+			url=f"https://rsd.instructure.com/courses/{course['id']}/assignments/{assignment['id']}"
+			todoist.create_comment(parent_task["id"],url)	
 
 		else:
 			print(f"Assignment too early({assignment['due_at']}), skipping...")
