@@ -116,6 +116,7 @@ def get_tasks_today(output=None):
 			due=functions.get_date_object(due)
 			if due.day==today.day:
 				# tasks.append(due)
+				print(f"Got todoist task {item['content']}")
 				if output is not None:
 					if item not in output:
 						output.append(item)
@@ -126,9 +127,8 @@ def get_tasks_today(output=None):
 
 def update_jobs(scheduler,tasks):
 	"""Add tasks to the scheduler, making sure there are no duplicates."""
-	current_jobs=scheduler.get_jobs()
 
-	for task in tasks:
+	for index,task in enumerate(tasks):
 		job_in=False
 		for job in current_jobs:
 			# Iterate through the jobs and see if the job for this task is there
@@ -137,6 +137,8 @@ def update_jobs(scheduler,tasks):
 		if not job_in:
 			#if it is not there, add it.
 			scheduler.add_job(show_notification,'date',run_date=task["due"]["datetime"],args=[task])
+			tasks.pop(index)
+
 
 
 def complete_task(task):

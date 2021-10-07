@@ -14,7 +14,7 @@ import todoist
 
 if __name__=="__main__":
 	n=ToastNotifier()
-	scheduler=BackgroundScheduler()
+	scheduler=BackgroundScheduler(job_defaults={'misfire_grace_time':2*60})
 
 	tasks=[]
 	todoist.sync(scheduler,tasks)
