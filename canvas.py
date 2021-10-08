@@ -36,12 +36,16 @@ def get_current_assignments(course):
 	if i is False:
 		print("Bad course, returning...")
 		return
+	locations=config["course_locations"][i]
+	tasks=todoist.get_tasks_in_project(locations["todoist_project_id"])
 	for assignment in assignments:
 		print("testing assignment...")
+		if functions.is_value_in_list(assignment["name"],"content",tasks):
+			print(f"Todoist task {assignment['name']} already exists, skipping...")	
+			continue
 		assignment_due=functions.get_date_object(assignment["due_at"])
 		if functions.is_one_datetime_before_another(today, assignment_due):
 			# If the due date is in the future
-			locations=config["course_locations"][i]
 			print(f"Creating todoist task {assignment['name']}")
 			parent_task=todoist.create_todoist_task(
 				assignment["name"],
