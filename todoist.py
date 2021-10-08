@@ -79,6 +79,17 @@ def get_tasks_from_todoist():
 			"Authorization": f"Bearer {todoist_token}"
 		}
 	).json()
+def get_tasks_in_project(project_id):
+	"""Get all your tasks in a a specific project"""
+	return requests.get(
+		"https://api.todoist.com/rest/v1/tasks",
+		params={
+			"project_id": project_id
+		},
+		headers={
+			"Authorization": f"Bearer {todoist_token}"
+		}
+	)
 
 def get_labels_from_todoist():
 	"""Get all your todoist labels and return them as json."""
