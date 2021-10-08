@@ -89,7 +89,7 @@ def get_tasks_in_project(project_id):
 		headers={
 			"Authorization": f"Bearer {todoist_token}"
 		}
-	)
+	).json()
 
 def get_labels_from_todoist():
 	"""Get all your todoist labels and return them as json."""
