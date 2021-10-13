@@ -27,6 +27,7 @@ def get_current_assignments(course):
 			"Authorization": f"Bearer {CANVAS_TOKEN}"
 		},
 		params={
+			"include":["submission"],
 			"bucket":"future"
 		}
 	).json()
@@ -42,6 +43,9 @@ def get_current_assignments(course):
 		print("testing assignment...")
 		if functions.is_value_in_list(assignment["name"],"content",tasks):
 			print(f"Todoist task {assignment['name']} already exists, skipping...")	
+			continue
+		if "submission" in assignment:
+			print(f"Canvas assignment {assignment['name']} has been completed, skipping...")
 			continue
 		assignment_due=functions.get_date_object(assignment["due_at"])
 		if functions.is_one_datetime_before_another(today, assignment_due):
