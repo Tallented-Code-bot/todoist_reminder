@@ -6,3 +6,6 @@ env
 *.html
 *.pyc
 config.json
+build/
+dist/
+*.spec
