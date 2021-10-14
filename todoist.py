@@ -138,7 +138,7 @@ def get_tasks_today(output=None):
 
 def update_jobs(scheduler,tasks):
 	"""Add tasks to the scheduler, making sure there are no duplicates."""
-
+	current_jobs=scheduler.get_jobs()
 	for index,task in enumerate(tasks):
 		job_in=False
 		for job in current_jobs:
