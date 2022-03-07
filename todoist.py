@@ -24,13 +24,13 @@ todoist_token = config["todoist_token"]
 
 
 def create_todoist_task(
-    content,
-    description=None,
-    project=None,
-    section=None,
-    parent_task=None,
+    content: str,
+    description: str = None,
+    project: int = None,
+    section: int = None,
+    parent_task: int = None,
     labels=None,
-    priority=None,
+    priority: int = None,
     due_datetime=None,
 ):
     """Creates a task in todoist.
